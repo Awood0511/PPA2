@@ -1,3 +1,5 @@
+package HW;
+
 public class ppa1Function {
 
 	public double[] splitTheTip(double dinnerAmmount, int guestNumb) {

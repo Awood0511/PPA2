@@ -1,7 +1,9 @@
+package HW;
+
 import java.util.Scanner;
 
 public class ppa1Interface {
-
+/*
 	public static void main(String[] args) {
 		//Initialize function object and scanner
 		ppa1Function ppa1 = new ppa1Function();
@@ -65,4 +67,5 @@ public class ppa1Interface {
 		
 		in.close(); //close scanner
 	}
+*/
 }
