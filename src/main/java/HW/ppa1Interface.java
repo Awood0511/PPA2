@@ -21,7 +21,14 @@ public class ppa1Interface {
 			System.out.println("3. Body Mass Index");
 			System.out.println("4. Retirement Age");
 			System.out.println("5. Exit");
-			selection = in.nextInt();
+			
+			try {
+				selection = in.nextInt();
+			}
+			catch(Exception e) {
+				//exit upon input error
+				selection = 5;
+			}
 			
 			if(selection == 1) {
 				System.out.println("\nYou have selected Split the Tip");
