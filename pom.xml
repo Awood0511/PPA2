@@ -33,7 +33,7 @@
             <manifest>
               <addClasspath>true</addClasspath>
               <classpathPrefix>lib/</classpathPrefix>
-              <mainClass>HW.App</mainClass>
+              <mainClass>HW.ppa1Interface</mainClass>
             </manifest>
           </archive>
         </configuration>
