@@ -1,4 +1,6 @@
-import org.junit.*;
+import org.junit.Test;
+import org.junit.Assert.*;
+
 
 class ppa1FunctionTest {
 
