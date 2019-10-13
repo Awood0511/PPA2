@@ -26,7 +26,7 @@ pipeline {
         }
         stage('Deliver') { 
             steps {
-                echo 'Would Run Executable' 
+                sh './jenkins/scripts/deliver.sh' 
             }
         }
     }
