@@ -78,6 +78,13 @@ public class ppa1Interface {
 */
 	public static void main(String[] args) {
 
+		try {
+    	Class.forName("org.postgresql.Driver");
+    }
+		catch (ClassNotFoundException e) {
+    	e.printStackTrace();
+    }
+
 		try{
 			Connection connection = DriverManager.getConnection("jdbc:postgresql://192.168.99.100:5432/testdb", "postgres", "password");
 
