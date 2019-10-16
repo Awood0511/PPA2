@@ -77,15 +77,21 @@ public class ppa1Interface {
 	}
 */
 	public static void main(String[] args) {
-		Connection connection = DriverManager.getConnection("jdbc:postgresql://192.168.99.100:5432/testdb", "postgres", "password");
 
-		System.out.println("Java JDBC PostgreSQL Example");
-		System.out.println("Connected to PostgreSQL database!");
+		try{
+			Connection connection = DriverManager.getConnection("jdbc:postgresql://192.168.99.100:5432/testdb", "postgres", "password");
 
-		Statement statement = connection.createStatement();
-		ResultSet resultSet = statement.executeQuery("SELECT * FROM test_table");
-		while (resultSet.next()) {
-			System.out.println("id: " + resultSet.getInt("id") + ", num: " + resultSet.getInt("num"));
+			System.out.println("Java JDBC PostgreSQL Example");
+			System.out.println("Connected to PostgreSQL database!");
+
+			Statement statement = connection.createStatement();
+			ResultSet resultSet = statement.executeQuery("SELECT * FROM test_table");
+			while (resultSet.next()) {
+				System.out.println("id: " + resultSet.getInt("id") + ", num: " + resultSet.getInt("num"));
+			}
+		}
+		catch(SQLException e) {
+			System.out.println("whoops");
 		}
 
 	}
