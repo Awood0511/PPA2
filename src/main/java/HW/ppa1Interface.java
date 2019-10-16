@@ -77,26 +77,17 @@ public class ppa1Interface {
 	}
 */
 	public static void main(String[] args) {
-			try (Connection connection = DriverManager.getConnection("jdbc:postgresql://192.168.99.100:5432/testdb", "postgres", "password")) {
+		Connection connection = DriverManager.getConnection("jdbc:postgresql://192.168.99.100:5432/testdb", "postgres", "password");
 
-					System.out.println("Java JDBC PostgreSQL Example");
-					// When this class first attempts to establish a connection, it automatically loads any JDBC 4.0 drivers found within
-					// the class path. Note that your application must manually load any JDBC drivers prior to version 4.0.
-//          Class.forName("org.postgresql.Driver");
+		System.out.println("Java JDBC PostgreSQL Example");
+		System.out.println("Connected to PostgreSQL database!");
 
-					System.out.println("Connected to PostgreSQL database!");
-					Statement statement = connection.createStatement();
-					ResultSet resultSet = statement.executeQuery("SELECT * FROM test_table");
-					while (resultSet.next()) {
-							System.out.println(resultSet.getInt("id"), resultSet.getInt("num"));
-					}
-
-			} /*catch (ClassNotFoundException e) {
-					System.out.println("PostgreSQL JDBC driver not found.");
-					e.printStackTrace();
-			}*/ catch (SQLException e) {
-					System.out.println("Connection failure.");
-					e.printStackTrace();
-			}
+		Statement statement = connection.createStatement();
+		ResultSet resultSet = statement.executeQuery("SELECT * FROM test_table");
+		while (resultSet.next()) {
+			System.out.println(resultSet.getInt("id"), resultSet.getInt("num"));
+		}
+		
 	}
+
 }
