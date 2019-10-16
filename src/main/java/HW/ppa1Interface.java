@@ -92,6 +92,7 @@ public class ppa1Interface {
 		}
 		catch(SQLException e) {
 			System.out.println("whoops");
+			e.printStackTrace();
 		}
 
 	}
