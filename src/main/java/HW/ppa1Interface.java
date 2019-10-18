@@ -86,17 +86,19 @@ public class ppa1Interface {
     }
 
 		try{
-			Connection connection = DriverManager.getConnection("jdbc:postgresql://192.168.99.100:5432/testdb", "postgres", "password");
+			Connection connection = DriverManager.getConnection("jdbc:postgresql://192.168.99.100:5432/ppa2db", "postgres", "password");
 
-			System.out.println("Java JDBC PostgreSQL Example");
-			System.out.println("Connected to PostgreSQL database!");
+			ppa1Function ppa2 = new ppa1Function();
+			double[] ans = ppa2.splitTheTipDB(10.00, 2, connection);
+			String ret = ppa2.bodymassDB(0, 2, 192.17, connection);
+			System.out.println(ret);
 
 			Statement statement = connection.createStatement();
-			ResultSet resultSet = statement.executeQuery("SELECT * FROM test_table");
-			int i = 0;
+			ResultSet resultSet = statement.executeQuery("SELECT * FROM bodymass");
 			while (resultSet.next()) {
-				System.out.println("Index[" + i + "] table entry: " + "id-" + resultSet.getInt("id") + ", num-" + resultSet.getInt("num"));
-				i++;
+				System.out.println("id: " + resultSet.getInt("id") + ", feet: " + resultSet.getInt("feet")
+				+ ", inches: " + resultSet.getInt("inches") + ", weight: " + resultSet.getDouble("weight")
+				+ ", bmi: " + resultSet.getDouble("bmi") + ", bodytype: " + resultSet.getString("bodytype"));
 			}
 		}
 		catch(SQLException e) {
