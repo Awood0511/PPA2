@@ -12,10 +12,8 @@ docker run \
 
 //command to run sql database in docker
 1. The command below starts up a new postgress db container named ppa2db
-docker run -d -p 5432:5432 -v postgres-data:/var/lib/postgresql/data --name ppa2db POSTGRES_PASSWORD=password POSTGRES_DB=testdb postgres
+docker run -d -p 5432:5432 -v postgres-data:/var/lib/postgresql/data --name ppa2db -e POSTGRES_PASSWORD=password -e POSTGRES_DB=testdb postgres
 2. This command enters the container and creates the tables
-
-//command to run our program in docker
 
 //db info
 user = postgres

@@ -93,8 +93,10 @@ public class ppa1Interface {
 
 			Statement statement = connection.createStatement();
 			ResultSet resultSet = statement.executeQuery("SELECT * FROM test_table");
+			int i = 0;
 			while (resultSet.next()) {
-				System.out.println("id: " + resultSet.getInt("id") + ", num: " + resultSet.getInt("num"));
+				System.out.println("Index[" + i + "] table entry: " + "id-" + resultSet.getInt("id") + ", num-" + resultSet.getInt("num"));
+				i++;
 			}
 		}
 		catch(SQLException e) {
