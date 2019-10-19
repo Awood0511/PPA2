@@ -4,38 +4,6 @@ import java.sql.*;
 
 public class ppa1Function {
 
-	public double[] splitTheTipDB(double dinnerAmount, int guestNumb, Connection connection) {
-
-		//create statement for sql connection
-		try{
-			Statement s = connection.createStatement();
-
-			if (guestNumb <= 0) {
-				double[] answer = { -1.0, -1.0 };
-				s.executeUpdate("Insert into splitTheTip (dinnerAmount,guests,costPerGuest,remainder) values(" + dinnerAmount + "," + guestNumb + "," + answer[0] + "," + answer[1] + ")");
-				return answer;
-			}
-			double total = dinnerAmount * 1.15; // adds the tip to the bill
-			total = Math.round(total * 100.0) / 100.0; // Rounds the total after tip to the nearest 2 decimal place.
-			int splitInt = (int) (total / guestNumb * 100.0); // cast as int to remove floating point error
-			double split = splitInt / 100.0; // turn back into a double
-			int remainderInt = (int) ((total * 100) % guestNumb); // get the remainder in form of an int
-			double remainder = remainderInt / 100.0; // makes the remainder back to a double to an double with only 2
-														// decimals
-			double[] answer = { split, remainder }; // create a return array with the answer
-
-			//save results to db
-			s.executeUpdate("Insert into splitTheTip (dinnerAmount,guests,costPerGuest,remainder) values(" + dinnerAmount + "," + guestNumb + "," + answer[0] + "," + answer[1] + ")");
-			return answer;
-		}
-		catch(SQLException e) {
-			System.out.println("Database connection lost");
-			e.printStackTrace();
-			double[] answer = { -1.0, -1.0 };
-			return answer;
-		}
-	}
-
 	public double[] splitTheTip(double dinnerAmount, int guestNumb) {
 		if (guestNumb <= 0) {
 			double[] answer = { -1.0, -1.0 };
@@ -57,61 +25,6 @@ public class ppa1Function {
 		int distInt = (int) (Math.round(dist * 10000)); // cast as an int saving 4 decimal places
 		dist = distInt / 10000.0; // make it back into a double
 		return dist;
-	}
-
-	public String bodymassDB(int feet, int inches, double weight, Connection conn) {
-		try{
-			Statement s = conn.createStatement();
-
-			double kilos = weight * 0.45;
-			double totalInches = feet * 12 + inches;
-			double meters = totalInches * 0.025;
-
-			// check edge cases
-			if (weight <= 30){
-				s.executeUpdate("Insert into bodymass (feet,inches,weight,bmi,bodytype) values(" + feet + "," + inches + "," + weight + "," + -1.0 + ", 'weightless')");
-				return "weightless";
-			}
-			else if (totalInches <= 24){
-				s.executeUpdate("Insert into bodymass (feet,inches,weight,bmi,bodytype) values(" + feet + "," + inches + "," + weight + "," + -1.0 + ", 'heightless')");
-				return "heightless";
-			}
-
-			// calculate BMI
-			double bmi = kilos / Math.pow(meters, 2);
-			// round to 2 decimal places
-			int bmiInt = (int) Math.round(bmi * 100);
-			bmi = bmiInt / 100.0;
-
-			// turn into our return string
-			String retString = "";
-			String bodytype = "";
-			if (bmi <= 18.5){
-				retString = "Underweight|" + bmi;
-				bodytype = "Underweight";
-			}
-			else if (bmi < 25){
-				retString = "Normal Weight|" + bmi;
-				bodytype = "Normal Weight";
-			}
-			else if (bmi < 30){
-				retString = "Overweight|" + bmi;
-				bodytype = "Overweight";
-			}
-			else{
-				retString = "Obese|" + bmi;
-				bodytype = "Obese";
-			}
-
-			s.executeUpdate("Insert into bodymass (feet,inches,weight,bmi,bodytype) values(" + feet + "," + inches + "," + weight + "," + bmi + ",'" + bodytype + "')");
-
-			return retString;
-		}
-		catch (SQLException e){
-			e.printStackTrace();
-			System.out.println("Lost connection to database");
-			return "-1.0|ERROR";
-		}
 	}
 
 	public String bodymass(int feet, int inches, double weight) {
@@ -174,5 +87,93 @@ public class ppa1Function {
 		} while (iceAge <= 100);
 
 		return iceAge;
+	}
+
+	/* ------------------------ DATABASE ENABLED FUNCTIONS -----------------------*/
+	public double[] splitTheTipDB(double dinnerAmount, int guestNumb, Connection connection) {
+
+		//create statement for sql connection
+		try{
+			Statement s = connection.createStatement();
+
+			if (guestNumb <= 0) {
+				double[] answer = { -1.0, -1.0 };
+				s.executeUpdate("Insert into splitTheTip (dinnerAmount,guests,costPerGuest,remainder) values(" + dinnerAmount + "," + guestNumb + "," + answer[0] + "," + answer[1] + ")");
+				return answer;
+			}
+			double total = dinnerAmount * 1.15; // adds the tip to the bill
+			total = Math.round(total * 100.0) / 100.0; // Rounds the total after tip to the nearest 2 decimal place.
+			int splitInt = (int) (total / guestNumb * 100.0); // cast as int to remove floating point error
+			double split = splitInt / 100.0; // turn back into a double
+			int remainderInt = (int) ((total * 100) % guestNumb); // get the remainder in form of an int
+			double remainder = remainderInt / 100.0; // makes the remainder back to a double to an double with only 2
+														// decimals
+			double[] answer = { split, remainder }; // create a return array with the answer
+
+			//save results to db
+			s.executeUpdate("Insert into splitTheTip (dinnerAmount,guests,costPerGuest,remainder) values(" + dinnerAmount + "," + guestNumb + "," + answer[0] + "," + answer[1] + ")");
+			return answer;
+		}
+		catch(SQLException e) {
+			System.out.println("Database connection lost");
+			e.printStackTrace();
+			double[] answer = { -1.0, -1.0 };
+			return answer;
+		}
+	}
+
+	public String bodymassDB(int feet, int inches, double weight, Connection conn) {
+		try{
+			Statement s = conn.createStatement();
+
+			double kilos = weight * 0.45;
+			double totalInches = feet * 12 + inches;
+			double meters = totalInches * 0.025;
+
+			// check edge cases
+			if (weight <= 30){
+				s.executeUpdate("Insert into bodymass (feet,inches,weight,bmi,bodytype) values(" + feet + "," + inches + "," + weight + "," + -1.0 + ", 'weightless')");
+				return "weightless";
+			}
+			else if (totalInches <= 24){
+				s.executeUpdate("Insert into bodymass (feet,inches,weight,bmi,bodytype) values(" + feet + "," + inches + "," + weight + "," + -1.0 + ", 'heightless')");
+				return "heightless";
+			}
+
+			// calculate BMI
+			double bmi = kilos / Math.pow(meters, 2);
+			// round to 2 decimal places
+			int bmiInt = (int) Math.round(bmi * 100);
+			bmi = bmiInt / 100.0;
+
+			// turn into our return string
+			String retString = "";
+			String bodytype = "";
+			if (bmi <= 18.5){
+				retString = "Underweight|" + bmi;
+				bodytype = "Underweight";
+			}
+			else if (bmi < 25){
+				retString = "Normal Weight|" + bmi;
+				bodytype = "Normal Weight";
+			}
+			else if (bmi < 30){
+				retString = "Overweight|" + bmi;
+				bodytype = "Overweight";
+			}
+			else{
+				retString = "Obese|" + bmi;
+				bodytype = "Obese";
+			}
+
+			s.executeUpdate("Insert into bodymass (feet,inches,weight,bmi,bodytype) values(" + feet + "," + inches + "," + weight + "," + bmi + ",'" + bodytype + "')");
+
+			return retString;
+		}
+		catch (SQLException e){
+			e.printStackTrace();
+			System.out.println("Database connection lost");
+			return "ERROR|-1.0";
+		}
 	}
 }
