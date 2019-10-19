@@ -2,6 +2,7 @@ package HW;
 
 import com.sun.net.httpserver.*;
 import java.io.*;
+import java.lang.reflect.Method;
 import java.net.*;
 
 public class Server {
@@ -26,28 +27,49 @@ public class Server {
     static class MainHandler implements HttpHandler{
         @Override
         public void handle (HttpExchange httpExchange) throws IOException{
+            String uri=httpExchange.getRequestURI().toString();
+            String method= httpExchange.getRequestMethod().toString();
             String temp = "Method: " + httpExchange.getRequestMethod() + "\n";
             temp = temp + "Path: " + httpExchange.getRequestURI();
-
+            
             //parse URI
             //GET to split
-            if(false){
-
+            if(method.equals("GET") && (uri.equals("/splitthetip"))){
+                getSplitthetip(httpExchange);
             }
-            else if(false){
-
+            else if(method.equals("GET") && (uri.equals("/bmi"))){
+              getBmi(httpExchange);
             }
-            else if(false){
-
+            else if(method.equals("POST") && (uri.equals("/splitthetip"))){
+              postSplitTheTip(httpExchange);
             }
-            else if(false){
-
+            else if(method.equals("POST") && (uri.equals("/bmi"))){
+              postBmi(httpExchange);
             }
             else{
               home(httpExchange);
             }
         }
+        private void getBmi(HttpExchange h) throws IOException{
+          String response= "Bmi is getting some fat";
+          h.sendResponseHeaders(200,response.getBytes().length);
+          OutputStream os= h.getResponseBody();
+          os.write(response.getBytes());
+          os.close();
+        }
+        private void getSplitthetip(HttpExchange h) throws IOException{
+          String response= "Split the tip is getting some fat";
+          h.sendResponseHeaders(200,response.getBytes().length);
+          OutputStream os= h.getResponseBody();
+          os.write(response.getBytes());
+          os.close();
+        }
+        private void postSplitTheTip(HttpExchange h) throws IOException{
 
+        }
+        private void postBmi(HttpExchange h) throws IOException{
+
+        }
         private void home(HttpExchange h) throws IOException{
           String response = "Welcome to the http interface.\n";
           response += "To see a list of all Split The Tip database entries go to /splitthetip\n";
