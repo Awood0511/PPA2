@@ -1,6 +1,7 @@
 package HW;
 
 import java.util.Scanner;
+import java.sql.*;
 
 public class ppa1Interface {
 
@@ -8,19 +9,49 @@ public class ppa1Interface {
 		// Initialize function object and scanner
 		ppa1Function ppa1 = new ppa1Function();
 		Scanner in = new Scanner(System.in);
+		//init sql connection vars
+		Connection connection = null;
+		Statement statement = null;
+		ResultSet rs = null;
+		boolean connected = false;
 
 		// Welcome Statement
 		System.out.println("Welcome to the PPA1 Function Interface. Please select a function or terminate the program.\n");
 
+		try {
+    	Class.forName("org.postgresql.Driver");
+    }
+		catch (ClassNotFoundException e) {
+    	e.printStackTrace();
+			System.out.println("Could not find SQL connection driver.");
+    }
+
+		try{
+			connection = DriverManager.getConnection("jdbc:postgresql://192.168.99.100:5432/ppa2db", "postgres", "password");
+			statement = connection.createStatement();
+			connected = true;
+		}
+		catch(SQLException e){
+			e.printStackTrace();
+			System.out.println("Could not connect to the database. Terminating program.");
+		}
+
 		// Loop to control interface interaction
-		int selection = 0;
+		int selection;
+		if(connected)
+			selection = 0;
+		else
+			selection = 5;
+
 		do {
-			System.out.println("Please enter the number for which function you would like to use.");
-			System.out.println("1. Split the Tip");
-			System.out.println("2. Shortest Distance");
-			System.out.println("3. Retirement Age");
-			System.out.println("4. Body Mass Index");
-			System.out.println("5. Exit");
+			if(selection != 5){
+				System.out.println("Please enter the number for which function you would like to use.");
+				System.out.println("1. Split the Tip - Database Enabled");
+				System.out.println("2. Shortest Distance");
+				System.out.println("3. Retirement Age");
+				System.out.println("4. Body Mass Index - Database Enabled");
+				System.out.println("5. Exit Program");
+			}
 
 			try{
 				selection = in.nextInt();
@@ -33,18 +64,33 @@ public class ppa1Interface {
 
 			if (selection == 1) {
 				System.out.println("\nYou have selected Split the Tip");
-				System.out.print("Enter the total bill: ");
+
+				//output previous satabase entries for split the tip
+				System.out.println("These are the previous entries for this program:");
+				try{
+					rs = statement.executeQuery("SELECT * FROM splitTheTip");
+					while (rs.next()) {
+						System.out.println("TimeStamp: " + rs.getString("createdAt") + ", Dinner Amount: " + rs.getDouble("dinnerAmount")
+						+ ", Guests: " + rs.getInt("guests") + ", Cost Per Guest: " + rs.getDouble("costPerGuest")
+						+ ", Remainder: " + rs.getDouble("remainder"));
+					}
+				}
+				catch(SQLException e){
+					e.printStackTrace();
+					System.out.println("Could not connect to Split the Tip table in the database.");
+				}
+
+				System.out.print("\nEnter the total bill: ");
 				double bill = in.nextDouble();
 				System.out.print("Enter the number of guests: ");
 				int guests = in.nextInt();
-				double[] ret = ppa1.splitTheTip(bill, guests);
+				double[] ret = ppa1.splitTheTipDB(bill, guests, connection);
 
 				// decipher return
 				if (ret[0] == -1)
 					System.out.println("There cannot be zero guests.\n");
 				else
-					System.out.println("Each person pays $" + ret[0] + " and must unequally split a remainder of $"
-							+ ret[1] + ".\n");
+					System.out.println("Each person pays $" + ret[0] + " and must unequally split a remainder of $" + ret[1] + ".\n");
 			} else if (selection == 2) {
 				System.out.println("\nYou have selected Shortest Distance.");
 				System.out.print("x1: ");
@@ -86,13 +132,29 @@ public class ppa1Interface {
 
 			} else if (selection == 4) {
 				System.out.println("\nYou have selected Body Mass Index.");
-				System.out.print("Enter your height in feet: ");
+
+				//output previous satabase entries for bmi
+				System.out.println("These are the previous entries for this program:");
+				try{
+					rs = statement.executeQuery("SELECT * FROM bodymass");
+					while (rs.next()) {
+						System.out.println("TimeStamp: " + rs.getString("createdAt") + ", Feet: " + rs.getInt("feet")
+						+ ", Inches: " + rs.getInt("inches") + ", Weight: " + rs.getDouble("weight")
+						+ ", Bmi: " + rs.getDouble("bmi") + ", Bodytype: " + rs.getString("bodytype"));
+					}
+				}
+				catch(SQLException e){
+					e.printStackTrace();
+					System.out.println("Could not connect to Bodymass table in the database.");
+				}
+
+				System.out.print("\nEnter your height in feet: ");
 				int feet = in.nextInt();
 				System.out.print("Enter your height in inches: ");
 				int inches = in.nextInt();
 				System.out.print("Enter your weight in pounds: ");
 				double lbs = in.nextDouble();
-				String ret = ppa1.bodymass(feet, inches, lbs);
+				String ret = ppa1.bodymassDB(feet, inches, lbs, connection);
 
 				// Parse return string
 				if (ret.equals("weightless"))
@@ -116,46 +178,3 @@ public class ppa1Interface {
 		in.close(); // close scanner
 	}
 }
-
-
-
-
-
-
-
-
-
-/*
-	public static void main(String[] args) {
-
-		try {
-    	Class.forName("org.postgresql.Driver");
-    }
-		catch (ClassNotFoundException e) {
-    	e.printStackTrace();
-    }
-
-		try{
-			Connection connection = DriverManager.getConnection("jdbc:postgresql://192.168.99.100:5432/ppa2db", "postgres", "password");
-
-			ppa1Function ppa2 = new ppa1Function();
-			double[] ans = ppa2.splitTheTipDB(10.00, 2, connection);
-			String ret = ppa2.bodymassDB(0, 2, 192.17, connection);
-			System.out.println(ret);
-
-			Statement statement = connection.createStatement();
-			ResultSet resultSet = statement.executeQuery("SELECT * FROM bodymass");
-			while (resultSet.next()) {
-				System.out.println("id: " + resultSet.getInt("id") + ", feet: " + resultSet.getInt("feet")
-				+ ", inches: " + resultSet.getInt("inches") + ", weight: " + resultSet.getDouble("weight")
-				+ ", bmi: " + resultSet.getDouble("bmi") + ", bodytype: " + resultSet.getString("bodytype"));
-			}
-		}
-		catch(SQLException e) {
-			System.out.println("whoops");
-			e.printStackTrace();
-		}
-
-	}
-}
-*/
