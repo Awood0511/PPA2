@@ -6,8 +6,9 @@ import java.net.*;
 
 public class Server {
 
-    public void Server() {
-        HttpServer server;
+    HttpServer server;
+
+    Server() {
         try {
             server = HttpServer.create(new InetSocketAddress(5000), 0);
             server.createContext("/", new MainHandler());
@@ -16,10 +17,12 @@ public class Server {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-     
-    
-      
     }
+
+    public void close(){
+      server.stop(1);
+    }
+
     static class MainHandler implements HttpHandler{
         @Override
         public void handle (HttpExchange httpExchange) throws IOException{
@@ -30,7 +33,4 @@ public class Server {
             os.close();
         }
     }
-
-    
 }
-

@@ -35,8 +35,11 @@ public class ppa1Interface {
 			e.printStackTrace();
 			System.out.println("Could not connect to the database. Terminating program.");
 		}
-		Server server= new Server();
-		
+
+		//start the server
+		Server server = new Server();
+		//server.server();
+
 		// Loop to control interface interaction
 		int selection;
 		if(connected)
@@ -176,6 +179,7 @@ public class ppa1Interface {
 
 		System.out.println("\nGoodbye!");
 
+		server.close();
 		in.close(); // close scanner
 	}
 }
