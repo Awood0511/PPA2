@@ -35,7 +35,8 @@ public class ppa1Interface {
 			e.printStackTrace();
 			System.out.println("Could not connect to the database. Terminating program.");
 		}
-
+		Server server= new Server();
+		
 		// Loop to control interface interaction
 		int selection;
 		if(connected)
