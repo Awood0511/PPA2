@@ -29,18 +29,50 @@ public class TestDBFunctions  {
   }
 
   @Test
-  public void ConnectionShouldCreateStatementTest() throws SQLException {
+  public void splitTheTipConnectionShouldCreateStatementTest() throws SQLException {
     f.splitTheTipDB(10,2,c);
     verify(c).createStatement();
   }
 
   @Test
-  public void ConnectionShouldCreateStatementTest2() throws SQLException {
+  public void splitTheTipNormalExecutionHasCorrectExecuteUpdate() throws SQLException {
     double dinnerAmount = 10.0;
     int guests = 2;
     double[] ret = {5.75,0};
-    assertArrayEquals(ret, f.splitTheTipDB(dinnerAmount,guests,c),
+    double[] answer = f.splitTheTipDB(dinnerAmount,guests,c);
+    assertArrayEquals(ret, answer,
         "10 + 1.50 tip should split evenly between 2 people with 5.75 each.");
+    String shouldHaveHappened = "Insert into splitTheTip (dinnerAmount,guests,costPerGuest,remainder) values("+dinnerAmount+","+guests+","+ret[0]+","+ret[1]+")";
+    verify(s).executeUpdate(shouldHaveHappened);
+  }
+
+  @Test
+  public void splitTheTipNegativeDinnerExecutionHasCorrectExecuteUpdate() throws SQLException {
+    double dinnerAmount = -4.03;
+    int guests = 3;
+    double[] ret = {-1.0,-1.0};
+    double[] answer = f.splitTheTipDB(dinnerAmount,guests,c);
+    assertArrayEquals(ret, answer,
+        "Should return -1.0 -1.0 since there was bad input.");
+    String shouldHaveHappened = "Insert into splitTheTip (dinnerAmount,guests,costPerGuest,remainder) values("+dinnerAmount+","+guests+","+ret[0]+","+ret[1]+")";
+    verify(s).executeUpdate(shouldHaveHappened);
+  }
+
+  @Test
+  public void splitTheTipZeroGuestsExecutionHasCorrectExecuteUpdate() throws SQLException {
+    double dinnerAmount = 17.54;
+    int guests = 0;
+    double[] ret = {-1.0,-1.0};
+    double[] answer = f.splitTheTipDB(dinnerAmount,guests,c);
+    assertArrayEquals(ret, answer,
+        "Should return -1.0 -1.0 since there was bad input.");
+    String shouldHaveHappened = "Insert into splitTheTip (dinnerAmount,guests,costPerGuest,remainder) values("+dinnerAmount+","+guests+","+ret[0]+","+ret[1]+")";
+    verify(s).executeUpdate(shouldHaveHappened);
+  }
+
+  @Test
+  public void splitTheTipErrorShouldReturn() throws SQLException {
+    
   }
 
 }
