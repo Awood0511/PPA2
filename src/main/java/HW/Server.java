@@ -26,7 +26,7 @@ public class Server {
     }
 
     class MainHandler implements HttpHandler{
-        
+
         @Override
         public void handle (HttpExchange httpExchange) throws IOException{
             String uri=httpExchange.getRequestURI().toString();
@@ -35,7 +35,6 @@ public class Server {
             temp = temp + "Path: " + httpExchange.getRequestURI();
 
             //parse URI
-            //GET to split
             if(method.equals("GET") && (uri.equals("/splitthetip"))){
                 getSplitTheTip(httpExchange);
             }
@@ -52,18 +51,19 @@ public class Server {
               home(httpExchange);
             }
         }
+
         private void getBmi(HttpExchange h) throws IOException{
           Statement statement= null;
           ResultSet rSet=null;
           try{
-            statement=	statement = connection.createStatement();
+            statement = connection.createStatement();
             rSet=statement.executeQuery("SELECT * FROM bodymass");
           }
           catch(SQLException e){
             e.printStackTrace();
-            System.out.println("Could not connect to the database. Terminating program.");
+            System.out.println("Could not connect to the database.");
           }
-          
+
           String response= formatIntoJSON(rSet);
           h.getResponseHeaders().set("Content-type","application/json");
           h.sendResponseHeaders(200,response.length());
@@ -71,11 +71,12 @@ public class Server {
           os.write(response.getBytes());
           os.close();
         }
+
         private void getSplitTheTip(HttpExchange h) throws IOException{
           Statement statement= null;
           ResultSet rSet=null;
           try{
-            statement=	statement = connection.createStatement();
+            statement = connection.createStatement();
             rSet=statement.executeQuery("SELECT * FROM splitTheTip");
           }
           catch(SQLException e){
@@ -89,12 +90,15 @@ public class Server {
           os.write(response.getBytes());
           os.close();
         }
+
         private void postSplitTheTip(HttpExchange h) throws IOException{
 
         }
+
         private void postBmi(HttpExchange h) throws IOException{
 
         }
+
         private void home(HttpExchange h) throws IOException{
           String response = "Welcome to the http interface.\n";
           response += "To see a list of all Split The Tip database entries go to /splitthetip\n";
@@ -114,17 +118,23 @@ public class Server {
           os.close();
         }
 
+        //formats the result set for the bmi or split tip query into JSON
         private String formatIntoJSON(ResultSet rs){
-          ResultSetMetaData meta = rs.getMetaData();
-          int cols = meta.getColumnCount();
-          boolean first = true;
-
-          //start building return string
           try{
+            ResultSetMetaData meta = rs.getMetaData();
+            int cols = meta.getColumnCount();
+            boolean first = true;
+
+            //return empty string if empty columns
+            if(cols == 0){
+              return "[]";
+            }
+
+            //start building return string
             String json = "[";
             while(rs.next()){
               if(!first){
-                json += ","
+                json += ",";
               }
               else{
                 first = false;
@@ -132,7 +142,7 @@ public class Server {
 
               //build the json object for this row based on what table its from
               json += "{";
-              if(meta.getTableName().equals("bodymass")){
+              if(meta.getTableName(1).equals("bodymass")){
                 json += "\"createdAt\":\"" + rs.getString("createdAt") + "\",";
                 json += "\"feet\":" + rs.getInt("feet") + ",";
                 json += "\"inches\":" + rs.getInt("inches") + ",";
