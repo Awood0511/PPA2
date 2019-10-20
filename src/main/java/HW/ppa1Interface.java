@@ -37,7 +37,7 @@ public class ppa1Interface {
 		}
 
 		//start the server
-		Server server = new Server();
+		Server server= new Server(connection);
 		//server.server();
 
 		// Loop to control interface interaction

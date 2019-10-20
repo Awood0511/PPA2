@@ -4,13 +4,14 @@ import com.sun.net.httpserver.*;
 import java.io.*;
 import java.lang.reflect.Method;
 import java.net.*;
-
+import java.sql.*;
 public class Server {
 
     HttpServer server;
-
-    Server() {
+    Connection connection;
+    Server(Connection con) {
         try {
+            connection=con;
             server = HttpServer.create(new InetSocketAddress(5000), 0);
             server.createContext("/", new MainHandler());
             server.start();
@@ -24,7 +25,8 @@ public class Server {
       server.stop(1);
     }
 
-    static class MainHandler implements HttpHandler{
+    class MainHandler implements HttpHandler{
+        
         @Override
         public void handle (HttpExchange httpExchange) throws IOException{
             String uri=httpExchange.getRequestURI().toString();
@@ -35,7 +37,7 @@ public class Server {
             //parse URI
             //GET to split
             if(method.equals("GET") && (uri.equals("/splitthetip"))){
-                getSplitthetip(httpExchange);
+                getSplitTheTip(httpExchange);
             }
             else if(method.equals("GET") && (uri.equals("/bmi"))){
               getBmi(httpExchange);
@@ -51,15 +53,38 @@ public class Server {
             }
         }
         private void getBmi(HttpExchange h) throws IOException{
-          String response= "Bmi is getting some fat";
-          h.sendResponseHeaders(200,response.getBytes().length);
+          Statement statement= null;
+          ResultSet rSet=null;
+          try{
+            statement=	statement = connection.createStatement();
+            rSet=statement.executeQuery("SELECT * FROM bodymass");
+          }
+          catch(SQLException e){
+            e.printStackTrace();
+            System.out.println("Could not connect to the database. Terminating program.");
+          }
+          
+          String response= formatIntoJSON(rSet);
+          h.getResponseHeaders().set("Content-type","application/json");
+          h.sendResponseHeaders(200,response.length());
           OutputStream os= h.getResponseBody();
           os.write(response.getBytes());
           os.close();
         }
-        private void getSplitthetip(HttpExchange h) throws IOException{
-          String response= "Split the tip is getting some fat";
-          h.sendResponseHeaders(200,response.getBytes().length);
+        private void getSplitTheTip(HttpExchange h) throws IOException{
+          Statement statement= null;
+          ResultSet rSet=null;
+          try{
+            statement=	statement = connection.createStatement();
+            rSet=statement.executeQuery("SELECT * FROM splitTheTip");
+          }
+          catch(SQLException e){
+            e.printStackTrace();
+            System.out.println("Could not connect to the database. Terminating program.");
+          }
+          String response= formatIntoJSON(rSet);
+          h.getResponseHeaders().set("Content-type","application/json");
+          h.sendResponseHeaders(200,response.length());
           OutputStream os= h.getResponseBody();
           os.write(response.getBytes());
           os.close();
