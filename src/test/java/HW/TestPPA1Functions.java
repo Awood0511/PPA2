@@ -2,15 +2,13 @@ package HW;
 
 //junit imports
 import static org.junit.jupiter.api.Assertions.*;
-import org.junit.Assert.*;
-import org.junit.Test;
-import org.junit.Before;
+import org.junit.jupiter.api.Test;
 
 public class TestPPA1Functions {
 
 	ppa1Function test = new ppa1Function();
 
-	/* TESTS FOR splitTheTip */
+	// TESTS FOR splitTheTip
 
 	@Test
 	public void EvenSplitTest() {
@@ -62,7 +60,7 @@ public class TestPPA1Functions {
 		assertTrue(t.length == 2, "The function should return an array with length 2");
 	}
 
-	/* TESTS FOR shortestDistance */
+	// TESTS FOR shortestDistance
 
 	@Test
 	public void nonDecimalTest() {
@@ -100,7 +98,7 @@ public class TestPPA1Functions {
 				"The distance should be 6.3246 with 4 dp of precision");
 	}
 
-	/* TESTS FOR BMI */
+	// TESTS FOR BMI
 
 	@Test
 	public void BMIBadInputTest() {
@@ -122,7 +120,7 @@ public class TestPPA1Functions {
 				"4 ft 7 at 220.5 lbs is Obese with BMI 52.48");
 	}
 
-	/* TESTS FOR Retirement Plan */
+	// TESTS FOR Retirement Plan
 	@Test
 	public void BadInputForRetirementTest() {
 		assertEquals(-1, test.retirementAge(0, 15, 10, 20), "The retirement age is suppose to be bigger than 16");
