@@ -3,7 +3,7 @@ package HW;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
-class ppa1FunctionTest {
+public class ppa1FunctionTest {
 
 	ppa1Function test = new ppa1Function();
 

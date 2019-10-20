@@ -98,7 +98,7 @@ public class ppa1Function {
 
 			if (guestNumb <= 0 || dinnerAmount < 0) {
 				double[] answer = { -1.0, -1.0 };
-				s.executeUpdate("Insert into splitTheTip (dinnerAmount,guests,costPerGuest,remainder) values(" + dinnerAmount + "," + guestNumb + "," + answer[0] + "," + answer[1] + ")");
+				//s.executeUpdate("Insert into splitTheTip (dinnerAmount,guests,costPerGuest,remainder) values(" + dinnerAmount + "," + guestNumb + "," + answer[0] + "," + answer[1] + ")");
 				return answer;
 			}
 			double total = dinnerAmount * 1.15; // adds the tip to the bill
