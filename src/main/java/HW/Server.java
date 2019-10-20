@@ -31,7 +31,7 @@ public class Server {
             String method= httpExchange.getRequestMethod().toString();
             String temp = "Method: " + httpExchange.getRequestMethod() + "\n";
             temp = temp + "Path: " + httpExchange.getRequestURI();
-            
+
             //parse URI
             //GET to split
             if(method.equals("GET") && (uri.equals("/splitthetip"))){
@@ -87,6 +87,50 @@ public class Server {
           OutputStream os= h.getResponseBody();
           os.write(response.getBytes());
           os.close();
+        }
+
+        private String formatIntoJSON(ResultSet rs){
+          ResultSetMetaData meta = rs.getMetaData();
+          int cols = meta.getColumnCount();
+          boolean first = true;
+
+          //start building return string
+          try{
+            String json = "[";
+            while(rs.next()){
+              if(!first){
+                json += ","
+              }
+              else{
+                first = false;
+              }
+
+              //build the json object for this row based on what table its from
+              json += "{";
+              if(meta.getTableName().equals("bodymass")){
+                json += "\"createdAt\":\"" + rs.getString("createdAt") + "\",";
+                json += "\"feet\":" + rs.getInt("feet") + ",";
+                json += "\"inches\":" + rs.getInt("inches") + ",";
+                json += "\"weight\":" + rs.getDouble("weight") + ",";
+                json += "\"bmi\":" + rs.getDouble("bmi") + ",";
+                json += "\"bodytype\":\"" + rs.getString("bodytype") + "\"";
+              }
+              else{
+                json += "\"createdAt\":\"" + rs.getString("createdAt") + "\",";
+                json += "\"dinnerAmount\":" + rs.getDouble("dinnerAmount") + ",";
+                json += "\"guests\":" + rs.getInt("guests") + ",";
+                json += "\"costPerGuest\":" + rs.getDouble("costPerGuest") + ",";
+                json += "\"remainder\":" + rs.getDouble("remainder");
+              }
+              json += "}";
+
+            }
+            json += "]";
+            return json;
+          }
+          catch(SQLException e){
+            return "Error reading result set.";
+          }
         }
     }
 }
