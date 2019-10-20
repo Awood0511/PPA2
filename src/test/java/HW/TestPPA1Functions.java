@@ -1,9 +1,12 @@
 package HW;
 
+//junit imports
 import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.Test;
+import org.junit.Assert.*;
+import org.junit.Test;
+import org.junit.Before;
 
-public class ppa1FunctionTest {
+public class TestPPA1Functions {
 
 	ppa1Function test = new ppa1Function();
 
