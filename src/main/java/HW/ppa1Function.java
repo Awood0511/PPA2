@@ -90,7 +90,7 @@ public class ppa1Function {
 	}
 
 	/* ------------------------ DATABASE ENABLED FUNCTIONS -----------------------*/
-	public double[] splitTheTipDB(double dinnerAmount, int guestNumb, Connection connection) {
+	public double[] splitTheTipDB(double dinnerAmount, int guestNumb, Connection connection) throws SQLException {
 
 		//create statement for sql connection
 		try{
@@ -114,15 +114,13 @@ public class ppa1Function {
 			s.executeUpdate("Insert into splitTheTip (dinnerAmount,guests,costPerGuest,remainder) values(" + dinnerAmount + "," + guestNumb + "," + answer[0] + "," + answer[1] + ")");
 			return answer;
 		}
-		catch(SQLException e) {
+		catch(SQLException e){
 			System.out.println("Database connection lost");
-			e.printStackTrace();
-			double[] answer = { -1.0, -1.0 };
-			return answer;
+			throw e;
 		}
 	}
 
-	public String bodymassDB(int feet, int inches, double weight, Connection conn) {
+	public String bodymassDB(int feet, int inches, double weight, Connection conn) throws SQLException {
 		try{
 			Statement s = conn.createStatement();
 
@@ -132,11 +130,11 @@ public class ppa1Function {
 
 			// check edge cases
 			if (weight <= 30){
-				s.executeUpdate("Insert into bodymass (feet,inches,weight,bmi,bodytype) values(" + feet + "," + inches + "," + weight + "," + -1.0 + ", 'weightless')");
+				s.executeUpdate("Insert into bodymass (feet,inches,weight,bmi,bodytype) values(" + feet + "," + inches + "," + weight + "," + -1.0 + ",'weightless')");
 				return "weightless";
 			}
 			else if (totalInches <= 24 || feet < 0 || inches < 0){
-				s.executeUpdate("Insert into bodymass (feet,inches,weight,bmi,bodytype) values(" + feet + "," + inches + "," + weight + "," + -1.0 + ", 'heightless')");
+				s.executeUpdate("Insert into bodymass (feet,inches,weight,bmi,bodytype) values(" + feet + "," + inches + "," + weight + "," + -1.0 + ",'heightless')");
 				return "heightless";
 			}
 
@@ -171,9 +169,8 @@ public class ppa1Function {
 			return retString;
 		}
 		catch (SQLException e){
-			e.printStackTrace();
 			System.out.println("Database connection lost");
-			return "ERROR|-1.0";
+			throw e;
 		}
 	}
 }

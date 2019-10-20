@@ -5,7 +5,7 @@ import java.sql.*;
 
 public class ppa1Interface {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws SQLException {
 
 		// Initialize function object and scanner
 		ppa1Function ppa1 = new ppa1Function();
@@ -89,13 +89,20 @@ public class ppa1Interface {
 				double bill = in.nextDouble();
 				System.out.print("Enter the number of guests: ");
 				int guests = in.nextInt();
-				double[] ret = ppa1.splitTheTipDB(bill, guests, connection);
 
-				// decipher return
-				if (ret[0] == -1)
-					System.out.println("There cannot be zero or fewer guests or a negative dinner price.\n");
-				else
-					System.out.println("Each person pays $" + ret[0] + " and must unequally split a remainder of $" + ret[1] + ".\n");
+				try{
+						double[] ret = ppa1.splitTheTipDB(bill, guests, connection);
+						// decipher return
+						if (ret[0] == -1)
+							System.out.println("There cannot be zero or fewer guests or a negative dinner price.\n");
+						else
+							System.out.println("Each person pays $" + ret[0] + " and must unequally split a remainder of $" + ret[1] + ".\n");
+				}
+				catch(SQLException e){
+					e.printStackTrace();
+					System.out.println("There was an SQLException\n");
+				}
+
 			} else if (selection == 2) {
 				System.out.println("\nYou have selected Shortest Distance.");
 				System.out.print("x1: ");
@@ -159,17 +166,23 @@ public class ppa1Interface {
 				int inches = in.nextInt();
 				System.out.print("Enter your weight in pounds: ");
 				double lbs = in.nextDouble();
-				String ret = ppa1.bodymassDB(feet, inches, lbs, connection);
 
-				// Parse return string
-				if (ret.equals("weightless"))
-					System.out.println("You must enter a weight over or equal to 30 pounds.\n");
-				else if (ret.equals("heightless"))
-					System.out.println("You must enter a height over or equal to 2 feet.\n");
-				else {
-					int parseIndex = ret.indexOf('|');
-					System.out.println("Your BMI is " + ret.substring(parseIndex + 1) + " which is considered "
-							+ ret.substring(0, parseIndex) + ".\n");
+				try{
+					String ret = ppa1.bodymassDB(feet, inches, lbs, connection);
+					// Parse return string
+					if (ret.equals("weightless"))
+						System.out.println("You must enter a weight over or equal to 30 pounds.\n");
+					else if (ret.equals("heightless"))
+						System.out.println("You must enter a height over or equal to 2 feet.\n");
+					else {
+						int parseIndex = ret.indexOf('|');
+						System.out.println("Your BMI is " + ret.substring(parseIndex + 1) + " which is considered "
+								+ ret.substring(0, parseIndex) + ".\n");
+					}
+				}
+				catch(SQLException e) {
+					e.printStackTrace();
+					System.out.println("There was an SQLException\n");
 				}
 
 			} else if (selection != 5) {
