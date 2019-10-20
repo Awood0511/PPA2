@@ -1,27 +1,30 @@
 package HW;
 
 import com.sun.net.httpserver.*;
-
-
 import java.io.*;
 import java.lang.reflect.Method;
 import java.net.*;
 import java.sql.*;
 import java.util.List;
 import java.util.Map;
+
 public class Server {
 
     HttpServer server;
     Connection connection;
-    Server(Connection con) {
+
+    //create a socket and start listening for requests
+    public boolean start(Connection con) {
         try {
             connection=con;
             server = HttpServer.create(new InetSocketAddress(5000), 0);
             server.createContext("/", new MainHandler());
             server.start();
+            return true;
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
+            System.out.println("Could not open socket at port 5000");
+            return false;
         }
     }
 
@@ -29,7 +32,12 @@ public class Server {
       server.stop(1);
     }
 
-    class MainHandler implements HttpHandler{
+    //use this to set the connection to a mock on tests
+    public void setConn(Connection conn){
+      connection = conn;
+    }
+
+    public class MainHandler implements HttpHandler{
 
         @Override
         public void handle (HttpExchange httpExchange) throws IOException{
@@ -98,21 +106,21 @@ public class Server {
         private void postSplitTheTip(HttpExchange h) throws IOException{
           try{
             Map <String, List<String>> map= h.getRequestHeaders();
-            int guests=-1;
-            double dinnerAmount=-1;
+            int guests = -1;
+            double dinnerAmount = -1.0;
 	          for (Map.Entry<String, List<String>> entry : map.entrySet()) {
               String temp= entry.getValue().toString();
-              temp=  temp.substring(temp.indexOf("[")+1,temp.indexOf("]")); 
+              temp=  temp.substring(temp.indexOf("[")+1,temp.indexOf("]"));
               if(entry.getKey().equalsIgnoreCase("dinnerAmount")){
                 dinnerAmount= Double.parseDouble(temp);
               }
               if(entry.getKey().equalsIgnoreCase("guests")){
                 guests=Integer.parseInt(temp);
               }
-              
-              
             }
-            if(guests ==-1 || dinnerAmount== -1 ){
+
+            //check for missing arguments
+            if(guests == -1 || dinnerAmount == -1.0 ){
               String response="One or more request headers were not set correctly";
               h.sendResponseHeaders(200,response.getBytes().length);
               OutputStream os= h.getResponseBody();
@@ -124,15 +132,15 @@ public class Server {
               ppa1Function ppa1Function= new ppa1Function();
               double[] ret=ppa1Function.splitTheTipDB(dinnerAmount,guests,connection);
               if (ret[0] == -1)
-              response=("There cannot be zero guests.\n");
-            else
-              response=("Each person pays $" + ret[0] + " and must unequally split a remainder of $" + ret[1] + ".\n");
-      
-            h.sendResponseHeaders(200,response.getBytes().length);
-            OutputStream os= h.getResponseBody();
-            os.write(response.getBytes());
-            os.close();
-				    }  
+                response=("There cannot be zero guests.\n");
+              else
+                response=("Each person pays $" + ret[0] + " and must unequally split a remainder of $" + ret[1] + ".\n");
+
+              h.sendResponseHeaders(200,response.getBytes().length);
+              OutputStream os= h.getResponseBody();
+              os.write(response.getBytes());
+              os.close();
+				    }
           }
           catch(Exception e){
             String response="Could not parse request header variables";
@@ -148,10 +156,10 @@ public class Server {
             Map <String, List<String>> map= h.getRequestHeaders();
             int feet=-1;
             int inches=-1;
-            double weight=-1;
+            double weight=-1.0;
 	          for (Map.Entry<String, List<String>> entry : map.entrySet()) {
-              String temp= entry.getValue().toString();
-              temp=  temp.substring(temp.indexOf("[")+1,temp.indexOf("]")); 
+              String temp = entry.getValue().toString();
+              temp = temp.substring(temp.indexOf("[")+1,temp.indexOf("]"));
               if(entry.getKey().equalsIgnoreCase("feet")){
                   feet= Integer.parseInt(temp);
               }
@@ -161,9 +169,10 @@ public class Server {
               if(entry.getKey().equalsIgnoreCase("weight")){
                 weight=Double.parseDouble(temp);
               }
-              
             }
-            if(inches ==-1 || feet==-1 || weight== -1 ){
+
+            //check for missing arguments
+            if(inches ==-1 || feet==-1 || weight==-1.0 ){
               String response="One or more request headers were not set correctly";
               h.sendResponseHeaders(200,response.getBytes().length);
               OutputStream os= h.getResponseBody();
@@ -175,10 +184,10 @@ public class Server {
               String ret=ppa1Function.bodymassDB(feet, inches, weight,connection);
               if (ret.equals("weightless"))
                   ret=("You must enter a weight over or equal to 30 pounds.\n");
-              
+
               else if (ret.equals("heightless"))
                 ret=("You must enter a height over or equal to 2 feet.\n");
-              
+
               else {
                 int parseIndex = ret.indexOf('|');
                 ret=("Your BMI is " + ret.substring(parseIndex + 1) + " which is considered "
@@ -189,7 +198,7 @@ public class Server {
               OutputStream os= h.getResponseBody();
               os.write(response.getBytes());
               os.close();
-				    }  
+				    }
           }
           catch(Exception e){
             String response="Could not parse request header variables";

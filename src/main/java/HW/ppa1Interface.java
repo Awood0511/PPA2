@@ -6,9 +6,11 @@ import java.sql.*;
 public class ppa1Interface {
 
 	public static void main(String[] args) {
+
 		// Initialize function object and scanner
 		ppa1Function ppa1 = new ppa1Function();
 		Scanner in = new Scanner(System.in);
+
 		//init sql connection vars
 		Connection connection = null;
 		Statement statement = null;
@@ -37,16 +39,16 @@ public class ppa1Interface {
 		}
 
 		//start the server
-		Server server= new Server(connection);
-		//server.server();
+		Server server = new Server();
+		boolean serverStarted = server.start(connection);
 
-		// Loop to control interface interaction
 		int selection;
-		if(connected)
+		if(connected && serverStarted)
 			selection = 0;
 		else
 			selection = 5;
 
+		// Loop to control interface interaction
 		do {
 			if(selection != 5){
 				System.out.println("Please enter the number for which function you would like to use.");
@@ -55,16 +57,15 @@ public class ppa1Interface {
 				System.out.println("3. Retirement Age");
 				System.out.println("4. Body Mass Index - Database Enabled");
 				System.out.println("5. Exit Program");
-			}
 
-			try{
-				selection = in.nextInt();
+				try{
+					selection = in.nextInt();
+				}
+				catch(Exception e){
+					e.printStackTrace();
+					selection = 5;
+				}
 			}
-			catch(Exception e){
-				e.printStackTrace();
-				selection = 5;
-			}
-
 
 			if (selection == 1) {
 				System.out.println("\nYou have selected Split the Tip");
@@ -92,7 +93,7 @@ public class ppa1Interface {
 
 				// decipher return
 				if (ret[0] == -1)
-					System.out.println("There cannot be zero guests.\n");
+					System.out.println("There cannot be zero or fewer guests or a negative dinner price.\n");
 				else
 					System.out.println("Each person pays $" + ret[0] + " and must unequally split a remainder of $" + ret[1] + ".\n");
 			} else if (selection == 2) {

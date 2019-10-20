@@ -5,7 +5,7 @@ import java.sql.*;
 public class ppa1Function {
 
 	public double[] splitTheTip(double dinnerAmount, int guestNumb) {
-		if (guestNumb <= 0) {
+		if (guestNumb <= 0 || dinnerAmount < 0) {
 			double[] answer = { -1.0, -1.0 };
 			return answer;
 		}
@@ -96,7 +96,7 @@ public class ppa1Function {
 		try{
 			Statement s = connection.createStatement();
 
-			if (guestNumb <= 0) {
+			if (guestNumb <= 0 || dinnerAmount < 0) {
 				double[] answer = { -1.0, -1.0 };
 				s.executeUpdate("Insert into splitTheTip (dinnerAmount,guests,costPerGuest,remainder) values(" + dinnerAmount + "," + guestNumb + "," + answer[0] + "," + answer[1] + ")");
 				return answer;
@@ -135,7 +135,7 @@ public class ppa1Function {
 				s.executeUpdate("Insert into bodymass (feet,inches,weight,bmi,bodytype) values(" + feet + "," + inches + "," + weight + "," + -1.0 + ", 'weightless')");
 				return "weightless";
 			}
-			else if (totalInches <= 24){
+			else if (totalInches <= 24 || feet < 0 || inches < 0){
 				s.executeUpdate("Insert into bodymass (feet,inches,weight,bmi,bodytype) values(" + feet + "," + inches + "," + weight + "," + -1.0 + ", 'heightless')");
 				return "heightless";
 			}
