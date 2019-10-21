@@ -29,7 +29,7 @@ public class ppa1Interface {
     }
 
 		try{
-			connection = DriverManager.getConnection("jdbc:postgresql://192.168.99.100:5432/ppa2db", "postgres", "password");
+			connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/ppa2db", "postgres", "password");
 			statement = connection.createStatement();
 			connected = true;
 		}

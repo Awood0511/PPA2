@@ -78,7 +78,7 @@ create table bodymass(
    exit
 
 //execute the code using maven
-1. open a terminal window in the folder that you cloned the repository into
+1. open a terminal window in the highest level directory that you cloned the repository into (it should have a pom.xml)
 2. Use this command to build the project
 
    mvn clean install

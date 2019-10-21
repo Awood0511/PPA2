@@ -137,7 +137,8 @@ public class HttpTest  {
     verify(os).write(answer.getBytes());
     verify(s, times(1)).executeUpdate("Insert into bodymass (feet,inches,weight,bmi,bodytype) values(" + 5 + "," + 11 + "," + 140.0 + "," + 20.0 + ",'" + "Normal Weight" + "')");
   }
-@Test
+
+  @Test
   public void getToSplitTHETIPQueriesDatabaseAndFormatsToJSON() throws Exception {
     //create stubs
     String answer;
@@ -157,13 +158,13 @@ public class HttpTest  {
     lenient().when(rs.next()).thenReturn(true).thenReturn(true).thenReturn(false);
     lenient().when(rs.getString("createdAt")).thenReturn("2019-10-19 15:26:41.45419-04").thenReturn("2019-10-19 15:29:13.602471-04");
     lenient().when(rs.getDouble("dinnerAmount")).thenReturn(Double.valueOf("10.0")).thenReturn(Double.valueOf("10.0"));
-    lenient().when(rs.getInt("guests")).thenReturn(2).thenReturn(2); 
+    lenient().when(rs.getInt("guests")).thenReturn(2).thenReturn(2);
     lenient().when(rs.getDouble("costPerGuest")).thenReturn(Double.valueOf("5.75")).thenReturn(Double.valueOf("5.75"));
     lenient().when(rs.getDouble("remainder")).thenReturn(Double.valueOf("0.0")).thenReturn(Double.valueOf("0.0"));
     lenient().when(rsJSON.next()).thenReturn(true).thenReturn(true).thenReturn(false);
     lenient().when(rsJSON.getString("createdAt")).thenReturn("2019-10-19 15:26:41.45419-04").thenReturn("2019-10-19 15:29:13.602471-04");
     lenient().when(rsJSON.getDouble("dinnerAmount")).thenReturn(Double.valueOf("10.0")).thenReturn(Double.valueOf("10.0"));
-    lenient().when(rsJSON.getInt("guests")).thenReturn(2).thenReturn(2); 
+    lenient().when(rsJSON.getInt("guests")).thenReturn(2).thenReturn(2);
     lenient().when(rsJSON.getDouble("costPerGuest")).thenReturn(Double.valueOf("5.75")).thenReturn(Double.valueOf("5.75"));
     lenient().when(rs.getDouble("remainder")).thenReturn(Double.valueOf("0.0")).thenReturn(Double.valueOf("0.0"));
     lenient().when(rs.getMetaData()).thenReturn(rsMeta);
@@ -180,6 +181,7 @@ public class HttpTest  {
     verify(headMock).set("Content-type","application/json");
     verify(s, times(1)).executeQuery("SELECT * FROM splitTheTip");
   }
+
   @Test
   public void getToBMIQueriesDatabaseAndFormatsToJSON() throws Exception {
     //create stubs
