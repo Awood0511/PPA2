@@ -1,24 +1,30 @@
 package HW;
 
-//junit imports
-import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.BeforeEach;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+import java.io.OutputStream;
+import java.net.URI;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import com.sun.net.httpserver.Headers;
+import com.sun.net.httpserver.HttpExchange;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 //mockito imports
 import org.mockito.junit.jupiter.MockitoExtension;
-import static org.mockito.Mockito.*;
-import org.mockito.Mock;
-import org.mockito.InjectMocks;
-
-import java.sql.*;
-import java.net.*;
-import com.sun.net.httpserver.*;
-import java.io.*;
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
 
 @ExtendWith(MockitoExtension.class)
 public class HttpTest  {
@@ -131,7 +137,49 @@ public class HttpTest  {
     verify(os).write(answer.getBytes());
     verify(s, times(1)).executeUpdate("Insert into bodymass (feet,inches,weight,bmi,bodytype) values(" + 5 + "," + 11 + "," + 140.0 + "," + 20.0 + ",'" + "Normal Weight" + "')");
   }
+@Test
+  public void getToSplitTHETIPQueriesDatabaseAndFormatsToJSON() throws Exception {
+    //create stubs
+    String answer;
 
+    //set up our mock function returns
+    URI uri = new URI("/splitthetip");
+    when(ex.getRequestURI()).thenReturn(uri);
+    when(ex.getRequestMethod()).thenReturn("GET");
+    when(ex.getResponseHeaders()).thenReturn(headMock);
+    doNothing().when(headMock).set(any(String.class),any(String.class));
+    doNothing().when(ex).sendResponseHeaders(any(Integer.class), any(Long.class));
+    when(ex.getResponseBody()).thenReturn(os);
+    doNothing().when(os).write(any(byte[].class));
+    doNothing().when(os).close();
+
+    //set up rs data
+    lenient().when(rs.next()).thenReturn(true).thenReturn(true).thenReturn(false);
+    lenient().when(rs.getString("createdAt")).thenReturn("2019-10-19 15:26:41.45419-04").thenReturn("2019-10-19 15:29:13.602471-04");
+    lenient().when(rs.getDouble("dinnerAmount")).thenReturn(Double.valueOf("10.0")).thenReturn(Double.valueOf("10.0"));
+    lenient().when(rs.getInt("guests")).thenReturn(2).thenReturn(2); 
+    lenient().when(rs.getDouble("costPerGuest")).thenReturn(Double.valueOf("5.75")).thenReturn(Double.valueOf("5.75"));
+    lenient().when(rs.getDouble("remainder")).thenReturn(Double.valueOf("0.0")).thenReturn(Double.valueOf("0.0"));
+    lenient().when(rsJSON.next()).thenReturn(true).thenReturn(true).thenReturn(false);
+    lenient().when(rsJSON.getString("createdAt")).thenReturn("2019-10-19 15:26:41.45419-04").thenReturn("2019-10-19 15:29:13.602471-04");
+    lenient().when(rsJSON.getDouble("dinnerAmount")).thenReturn(Double.valueOf("10.0")).thenReturn(Double.valueOf("10.0"));
+    lenient().when(rsJSON.getInt("guests")).thenReturn(2).thenReturn(2); 
+    lenient().when(rsJSON.getDouble("costPerGuest")).thenReturn(Double.valueOf("5.75")).thenReturn(Double.valueOf("5.75"));
+    lenient().when(rs.getDouble("remainder")).thenReturn(Double.valueOf("0.0")).thenReturn(Double.valueOf("0.0"));
+    lenient().when(rs.getMetaData()).thenReturn(rsMeta);
+    lenient().when(rsJSON.getMetaData()).thenReturn(rsJSONMeta);
+    lenient().when(rsMeta.getColumnCount()).thenReturn(2);
+    lenient().when(rsJSONMeta.getColumnCount()).thenReturn(2);
+    lenient().when(rsMeta.getTableName(1)).thenReturn("splitTheTip");
+    lenient().when(rsJSONMeta.getTableName(1)).thenReturn("splitTheTip");
+
+    //call handle
+    handler.handle(ex);
+    answer = handler.formatIntoJSON(rsJSON);
+    verify(os).write(answer.getBytes());
+    verify(headMock).set("Content-type","application/json");
+    verify(s, times(1)).executeQuery("SELECT * FROM splitTheTip");
+  }
   @Test
   public void getToBMIQueriesDatabaseAndFormatsToJSON() throws Exception {
     //create stubs
@@ -163,14 +211,12 @@ public class HttpTest  {
     lenient().when(rsJSON.getDouble("weight")).thenReturn(Double.valueOf("192.17")).thenReturn(Double.valueOf("140.66"));
     lenient().when(rsJSON.getDouble("bmi")).thenReturn(Double.valueOf("-1.0")).thenReturn(Double.valueOf("23.97"));
     lenient().when(rsJSON.getString("bodytype")).thenReturn("heightless").thenReturn("Normal Weight");
-
     lenient().when(rs.getMetaData()).thenReturn(rsMeta);
     lenient().when(rsJSON.getMetaData()).thenReturn(rsJSONMeta);
     lenient().when(rsMeta.getColumnCount()).thenReturn(2);
     lenient().when(rsJSONMeta.getColumnCount()).thenReturn(2);
     lenient().when(rsMeta.getTableName(1)).thenReturn("bodymass");
     lenient().when(rsJSONMeta.getTableName(1)).thenReturn("bodymass");
-
     //call handle
     handler.handle(ex);
     answer = handler.formatIntoJSON(rsJSON);
