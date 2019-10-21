@@ -42,7 +42,7 @@ public class Server {
         @Override
         public void handle (HttpExchange httpExchange) throws IOException{
             String uri=httpExchange.getRequestURI().toString();
-            String method= httpExchange.getRequestMethod().toString();
+            String method= httpExchange.getRequestMethod();
             String temp = "Method: " + httpExchange.getRequestMethod() + "\n";
             temp = temp + "Path: " + httpExchange.getRequestURI();
 
@@ -53,10 +53,10 @@ public class Server {
             else if(method.equals("GET") && (uri.equals("/bmi"))){
               getBmi(httpExchange);
             }
-            else if(method.equals("POST") && (uri.contains("/splitthetip"))){
+            else if(method.equals("POST") && (uri.equals("/splitthetip"))){
               postSplitTheTip(httpExchange);
             }
-            else if(method.equals("POST") && (uri.contains("/bmi"))){
+            else if(method.equals("POST") && (uri.equals("/bmi"))){
               postBmi(httpExchange);
             }
             else{
@@ -105,7 +105,7 @@ public class Server {
 
         private void postSplitTheTip(HttpExchange h) throws IOException{
           try{
-            Map <String, List<String>> map= h.getRequestHeaders();
+            Map <String, List<String>> map = h.getRequestHeaders();
             int guests = -1;
             double dinnerAmount = -1.0;
 	          for (Map.Entry<String, List<String>> entry : map.entrySet()) {
@@ -229,7 +229,7 @@ public class Server {
         }
 
         //formats the result set for the bmi or split tip query into JSON
-        private String formatIntoJSON(ResultSet rs){
+        public String formatIntoJSON(ResultSet rs){
           try{
             ResultSetMetaData meta = rs.getMetaData();
             int cols = meta.getColumnCount();

@@ -27,6 +27,7 @@ pipeline {
         stage('Integration Tests') {
             steps {
                 sh 'mvn test -Dtest=TestDBFunctions'
+                sh 'mvn test -Dtest=HttpTest'
             }
             post {
                 always {
